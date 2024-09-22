@@ -33,6 +33,6 @@ class DefaultRootComponent(componentContext: ComponentContext) : RootComponent, 
     )
 
     private fun child(config: Config, componentContext: ComponentContext): RootComponent.Child = when (config) {
-        Config.Main -> RootComponent.Child.Home(HomeComponent(componentContext))
+        Config.Main -> RootComponent.Child.Home(DefaultHomeComponent(componentContext))
     }
 }

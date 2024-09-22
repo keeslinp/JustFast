@@ -1,19 +1,12 @@
 package org.keeslinp.fasting
 
-import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import com.arkivanov.decompose.extensions.compose.stack.Children
 import com.arkivanov.decompose.extensions.compose.stack.animation.fade
 import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import org.keeslinp.fasting.screens.HomeComponent
-
 import org.keeslinp.fasting.screens.RootComponent
 
-@Composable
-fun HomeContent(component: HomeComponent) {
-    Text("Home")
-}
 
 @Composable
 fun RootContent(component: RootComponent, modifier: Modifier = Modifier) {

@@ -61,6 +61,7 @@ kotlin {
             implementation(libs.koin.core)
             implementation(libs.decompose.compose)
             implementation(libs.decompose.core)
+            implementation(libs.compose.material3)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

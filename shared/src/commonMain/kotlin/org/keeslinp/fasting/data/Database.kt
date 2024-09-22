@@ -7,6 +7,8 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.room.RoomDatabaseConstructor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import org.keeslinp.fasting.data.fast.FastDao
+import org.keeslinp.fasting.data.fast.FastEntity
 
 @Database(entities = [FastEntity::class], version = 1)
 @ConstructedBy(AppDatabaseConstructor::class)
