@@ -17,7 +17,7 @@ interface FastDao {
     @Query("SELECT * FROM FastEntity where endTime is NULL LIMIT 1")
     fun getActiveFast(): Flow<FastEntity?>
 
-    @Query("SELECT * FROM FastEntity where endTime")
+    @Query("SELECT * FROM FastEntity where endTime ORDER BY endTime DESC")
     fun getPastFasts(): Flow<List<FastEntity>>
 
     @Query("DELETE FROM FastEntity where id = :id")

@@ -57,6 +57,7 @@ kotlin {
             implementation(libs.decompose.core)
             implementation(libs.essenty.lifecycle.coroutines)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.kotlinx.collections.immutable)
         }
     }
 }
