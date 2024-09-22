@@ -19,9 +19,11 @@ val dateFormatter = LocalDateTime.Format {
     char(' ')
     year(Padding.NONE)
     char(' ')
-    hour(Padding.NONE)
+    amPmHour(Padding.NONE)
     char(':')
-    minute(Padding.NONE)
+    minute(Padding.ZERO)
+    char(' ')
+    amPmMarker("AM", "PM")
 }
 
 @Entity
