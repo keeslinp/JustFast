@@ -22,6 +22,6 @@ private fun NoFast() {
 @Preview
 private fun ActiveFast() {
     MaterialTheme {
-        HomeInterior(state = HomeComponent.State.Active(FastEntity(startTime = Clock.systemDefaultZone().millis())), toggleFast = {})
+        HomeInterior(state = HomeComponent.State.Active(FastEntity(startTime = Clock.systemDefaultZone().instant().epochSecond)), toggleFast = {})
     }
 }

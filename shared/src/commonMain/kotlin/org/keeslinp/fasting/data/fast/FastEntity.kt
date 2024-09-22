@@ -32,7 +32,7 @@ data class FastEntity(
     val startTime: Long,
     val endTime: Long? = null,
 ) {
-    fun formatStartTime() = Instant.fromEpochMilliseconds(startTime).toLocalDateTime(TimeZone.currentSystemDefault()).format(dateFormatter)
-    fun formatEndTime() = endTime?.let { Instant.fromEpochMilliseconds(it).toLocalDateTime(TimeZone.currentSystemDefault()).format(dateFormatter) }
+    fun formatStartTime() = Instant.fromEpochSeconds(startTime).toLocalDateTime(TimeZone.currentSystemDefault()).format(dateFormatter)
+    fun formatEndTime() = endTime?.let { Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.currentSystemDefault()).format(dateFormatter) }
 }
 

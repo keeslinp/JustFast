@@ -11,7 +11,6 @@ class ToggleFastUseCase: KoinComponent {
     private val fastDao: FastDao by inject()
 
     suspend fun toggleFast() {
-
         val now = Clock.System.now().epochSeconds;
         val activeFast = fastDao.getActiveFast().firstOrNull()
         if (activeFast != null) {
