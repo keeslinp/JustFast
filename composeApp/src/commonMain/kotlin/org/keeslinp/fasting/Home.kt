@@ -219,9 +219,8 @@ fun HomeInterior(
                         }
                     }
                 }
-                item { Text("Past fasts:", style = MaterialTheme.typography.headlineSmall) }
-                if (history.isEmpty()) {
-                    item { Text("No fasting history") }
+                if (!history.isEmpty()) {
+                    item { Spacer(Modifier.height(16.dp)) }
                 }
                 items(history, key = { it.id }) { fast ->
                     FastRow(
