@@ -146,11 +146,13 @@ fun FastRow(fast: DisplayFast, modifier: Modifier, updater: ((FastEntity) -> Fas
             ) {
                 Column {
                     Text(fast.startDate)
-                    Text(
-                        "${fast.durationHours} hours",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.secondary
-                    )
+                    fast.durationText?.also {
+                        Text(
+                            it,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.secondary
+                        )
+                    }
                 }
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
