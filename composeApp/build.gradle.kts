@@ -62,6 +62,7 @@ kotlin {
             implementation(libs.decompose.core)
             implementation(libs.compose.material3)
             implementation(libs.kotlinx.collections.immutable)
+            implementation(libs.kotlinx.datetime)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)

@@ -10,6 +10,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
@@ -39,9 +40,10 @@ interface HomeComponent {
     val fastState: StateFlow<FastState?>
 
     val history: StateFlow<ImmutableList<DisplayFast>>
+    fun updateFast(id: Long, updater: (FastEntity) -> FastEntity)
 }
 class DefaultHomeComponent(componentContext: ComponentContext): ComponentContext by componentContext, KoinComponent, HomeComponent {
-    private val scope = coroutineScope(Dispatchers.IO)
+    private val scope = coroutineScope(Dispatchers.Default)
     private val toggleFastUseCase: ToggleFastUseCase by inject()
 
     override fun toggleFast() {
@@ -56,4 +58,10 @@ class DefaultHomeComponent(componentContext: ComponentContext): ComponentContext
     override val fastState = activeFast.map { if (it != null) { HomeComponent.FastState.Active(it.display()) } else { HomeComponent.FastState.Inactive } }.stateIn(scope=scope, started = SharingStarted.WhileSubscribed(5000), initialValue = null)
 
     override val history = fastDao.getPastFasts().mapLatest { it.map(FastEntity::display).toImmutableList() }.stateIn(scope, started = SharingStarted.WhileSubscribed(5000), persistentListOf())
+
+    override fun updateFast(id: Long, updater: (FastEntity) -> FastEntity) {
+        scope.launch {
+            fastDao.getFast(id)?.let(updater)?.also { fastDao.update(it) }
+        }
+    }
 }

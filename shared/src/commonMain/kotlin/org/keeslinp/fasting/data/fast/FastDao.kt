@@ -22,4 +22,7 @@ interface FastDao {
 
     @Query("DELETE FROM FastEntity where id = :id")
     fun deleteFast(id: Long)
+
+    @Query("SELECT * FROM FastEntity where id is :id LIMIT 1")
+     suspend fun getFast(id: Long): FastEntity?
 }
