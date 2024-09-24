@@ -52,12 +52,12 @@ import org.keeslinp.fasting.screens.HomeComponent.FastState
 
 @Composable
 fun FastLabel(label: String) {
-        Text(
-            label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.secondary,
-            modifier = Modifier.padding(vertical = 16.dp)
-        )
+    Text(
+        label,
+        style = MaterialTheme.typography.labelSmall,
+        color = MaterialTheme.colorScheme.secondary,
+        modifier = Modifier.padding(vertical = 16.dp)
+    )
 }
 
 enum class DialogState {
@@ -90,7 +90,8 @@ fun FastDate(text: String, timeSeconds: Long, onChange: (Long) -> Unit) {
     fun onEdit() {
         dialogState = DialogState.Date
         datePickerState.selectedDateMillis = (timeSeconds + getOffset()) * 1000
-        val local = Instant.fromEpochSeconds(timeSeconds).toLocalDateTime(TimeZone.currentSystemDefault())
+        val local =
+            Instant.fromEpochSeconds(timeSeconds).toLocalDateTime(TimeZone.currentSystemDefault())
         timePickerState.hour = local.hour
         timePickerState.minute = local.minute
     }
@@ -101,7 +102,12 @@ fun FastDate(text: String, timeSeconds: Long, onChange: (Long) -> Unit) {
             modifier = Modifier.fillMaxWidth().padding(8.dp)
         ) {
             Text(text)
-            Icon(imageVector = Icons.Default.Edit, tint = MaterialTheme.colorScheme.secondary, contentDescription = "Edit", modifier = Modifier.padding(start = 8.dp, bottom = 4.dp).size(18.dp))
+            Icon(
+                imageVector = Icons.Default.Edit,
+                tint = MaterialTheme.colorScheme.secondary,
+                contentDescription = "Edit",
+                modifier = Modifier.padding(start = 8.dp, bottom = 4.dp).size(18.dp)
+            )
         }
     }
     when (dialogState) {
