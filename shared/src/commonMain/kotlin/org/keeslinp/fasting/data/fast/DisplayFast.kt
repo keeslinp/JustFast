@@ -36,9 +36,9 @@ val dateTimeFormatter = LocalDateTime.Format {
 }
 
 data class DisplayFast(val id: Long, val startSeconds: Long, val endSeconds: Long?) {
-    val startDate: String = Instant.fromEpochSeconds(startSeconds).toLocalDateTime(TimeZone.currentSystemDefault()).date.format(
-        dateFormatter)
-    val startTime: String = Instant.fromEpochSeconds(startSeconds).toLocalDateTime(TimeZone.currentSystemDefault()).format(dateTimeFormatter)
-    val endTime: String? = endSeconds?.let { Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.currentSystemDefault()).format(dateTimeFormatter) }
-    val durationHours: Int? = endSeconds?.let { (it - startSeconds) / 3600 }?.toInt()
+    val startDate: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(TimeZone.currentSystemDefault()).date.format(
+        dateFormatter) }
+    val startTime: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(TimeZone.currentSystemDefault()).format(dateTimeFormatter) }
+    val endTime: String? by lazy { endSeconds?.let { Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.currentSystemDefault()).format(dateTimeFormatter) } }
+    val durationHours: Int? by lazy { endSeconds?.let { (it - startSeconds) / 3600 }?.toInt() }
 }
