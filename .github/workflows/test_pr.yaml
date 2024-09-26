@@ -22,4 +22,4 @@ jobs:
 
     - id: 'step-1'
       name: 'Run tests'
-      run: './gradlew test'
+      run: './gradlew testDebug'
