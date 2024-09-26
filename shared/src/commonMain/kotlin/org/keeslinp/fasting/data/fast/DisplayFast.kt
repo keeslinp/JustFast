@@ -38,7 +38,7 @@ val dateTimeFormatter = LocalDateTime.Format {
 }
 
 data class DisplayFast(val id: Long, val startSeconds: Long, val endSeconds: Long?): KoinComponent {
-    val timeZone: TimeZone by inject()
+    private val timeZone: TimeZone by inject()
     val startDate: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(timeZone).date.format(
         dateFormatter) }
     val startTime: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(timeZone).format(dateTimeFormatter) }
