@@ -34,4 +34,12 @@ class DisplayFastTest: KoinTest {
     fun startDate() {
         assertEquals("Wed, Sep 25", DisplayFast(0, 1727315122, 1727315122 + 1000).startDate)
     }
+    @Test
+    fun startTime() {
+        assertEquals("Sep 25, 2024 6:45 PM", DisplayFast(0, 1727315122, 1727315122 + 1000).startTime)
+    }
+    @Test
+    fun endTime() {
+        assertEquals("Sep 25, 2024 6:46 PM", DisplayFast(0, 1727315122, 1727315122 + 60).endTime)
+    }
 }
