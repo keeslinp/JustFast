@@ -49,6 +49,9 @@ kotlin {
     }
 
     sourceSets {
+        commonTest.dependencies {
+            implementation(libs.kotlin.test)
+        }
         commonMain.dependencies {
             implementation(libs.androidx.room.runtime)
             implementation(libs.androidx.sqlite)
