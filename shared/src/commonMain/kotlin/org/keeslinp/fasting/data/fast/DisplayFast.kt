@@ -10,6 +10,8 @@ import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.inject
 
 val dateFormatter = LocalDate.Format {
     dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
@@ -35,10 +37,11 @@ val dateTimeFormatter = LocalDateTime.Format {
     amPmMarker("AM", "PM")
 }
 
-data class DisplayFast(val id: Long, val startSeconds: Long, val endSeconds: Long?) {
-    val startDate: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(TimeZone.currentSystemDefault()).date.format(
+data class DisplayFast(val id: Long, val startSeconds: Long, val endSeconds: Long?): KoinComponent {
+    val timeZone: TimeZone by inject()
+    val startDate: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(timeZone).date.format(
         dateFormatter) }
-    val startTime: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(TimeZone.currentSystemDefault()).format(dateTimeFormatter) }
-    val endTime: String? by lazy { endSeconds?.let { Instant.fromEpochSeconds(it).toLocalDateTime(TimeZone.currentSystemDefault()).format(dateTimeFormatter) } }
+    val startTime: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(timeZone).format(dateTimeFormatter) }
+    val endTime: String? by lazy { endSeconds?.let { Instant.fromEpochSeconds(it).toLocalDateTime(timeZone).format(dateTimeFormatter) } }
     val durationText: String? by lazy { endSeconds?.let { "${(it - startSeconds) / 3600 } hours" } }
 }
