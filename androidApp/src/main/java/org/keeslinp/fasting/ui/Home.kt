@@ -38,6 +38,7 @@ import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import kotlinx.collections.immutable.ImmutableList
@@ -135,7 +136,7 @@ fun FastDate(text: String, timeSeconds: Long, onChange: (Long) -> Unit) {
 }
 
 @Composable
-fun FastRow(fast: DisplayFast, modifier: Modifier, updater: ((FastEntity) -> FastEntity) -> Unit) {
+fun FastRow(fast: DisplayFast, modifier: Modifier = Modifier, updater: ((FastEntity) -> FastEntity) -> Unit) {
     var expanded by remember { mutableStateOf(false) }
     Card(onClick = { expanded = !expanded }, modifier = modifier) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).fillMaxWidth()) {
@@ -145,7 +146,7 @@ fun FastRow(fast: DisplayFast, modifier: Modifier, updater: ((FastEntity) -> Fas
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Column {
-                    Text(fast.startDate)
+                    Text(fast.startDate, modifier = Modifier.testTag("start-date"))
                     fast.durationText?.also {
                         Text(
                             it,
@@ -156,7 +157,7 @@ fun FastRow(fast: DisplayFast, modifier: Modifier, updater: ((FastEntity) -> Fas
                 }
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = "Expand",
+                    contentDescription = if (expanded) { "Collapse" } else { "Expand" },
                 )
             }
             AnimatedVisibility(expanded) {

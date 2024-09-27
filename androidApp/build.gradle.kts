@@ -45,6 +45,7 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    testOptions.unitTests.isIncludeAndroidResources = true
 }
 
 dependencies {
@@ -68,10 +69,11 @@ dependencies {
     implementation(libs.kotlinx.datetime)
 
     testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.junit)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(platform(libs.androidx.compose.bom))
-    androidTestImplementation(libs.androidx.ui.test.junit4)
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }
