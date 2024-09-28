@@ -38,11 +38,11 @@ val dateTimeFormatter = LocalDateTime.Format {
     amPmMarker("AM", "PM")
 }
 
-data class DisplayFast(val id: Long, val startSeconds: Long, val endSeconds: Long?): KoinComponent {
+data class DisplayFast(val id: Long, val startSeconds: Long, val endSeconds: Long): KoinComponent {
     private val timeZone: TimeZone by inject()
     val startDate: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(timeZone).date.format(
         dateFormatter) }
     val startTime: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(timeZone).format(dateTimeFormatter) }
-    val endTime: String? by lazy { endSeconds?.let { Instant.fromEpochSeconds(it).toLocalDateTime(timeZone).format(dateTimeFormatter) } }
-    val durationText: String? by lazy { endSeconds?.let { "${((it - startSeconds).toFloat() / 3600).roundToInt() } hours" } }
+    val endTime: String by lazy { Instant.fromEpochSeconds(endSeconds).toLocalDateTime(timeZone).format(dateTimeFormatter) }
+    val durationText: String by lazy { "${((endSeconds - startSeconds).toFloat() / 3600).roundToInt() } hours" }
 }

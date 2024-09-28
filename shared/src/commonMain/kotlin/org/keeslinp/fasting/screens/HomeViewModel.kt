@@ -6,6 +6,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
@@ -60,6 +61,7 @@ class HomeViewModel() : KoinComponent, ViewModel() {
         initialValue = null
     )
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     val history = fastDao.getPastFasts().mapLatest { it.map(FastEntity::display).toImmutableList() }
         .stateIn(
             scope = backgroundScope,

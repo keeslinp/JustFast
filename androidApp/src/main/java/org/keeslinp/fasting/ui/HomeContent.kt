@@ -193,13 +193,11 @@ fun FastRow(
             ) {
                 Column {
                     Text(fast.startDate, modifier = Modifier.testTag("start-date"))
-                    fast.durationText?.also {
-                        Text(
-                            it,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                    }
+                    Text(
+                        fast.durationText,
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.secondary
+                    )
                 }
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
@@ -218,9 +216,7 @@ fun FastRow(
                 ) {
                     Column {
                         FastLabel("Start:")
-                        if (fast.endTime != null) {
-                            FastLabel("End:")
-                        }
+                        FastLabel("End:")
                     }
                     Column(modifier = Modifier.width(IntrinsicSize.Max)) {
                         FastDate(fast.startTime, fast.startSeconds) { newStart ->
@@ -230,15 +226,11 @@ fun FastRow(
                                 )
                             }
                         }
-                        fast.endTime?.also { endTime ->
-                            fast.endSeconds?.also { endSeconds ->
-                                FastDate(endTime, endSeconds) { newEnd ->
-                                    updater {
-                                        it.copy(
-                                            startTime = newEnd
-                                        )
-                                    }
-                                }
+                        FastDate(fast.endTime, fast.endSeconds) { newEnd ->
+                            updater {
+                                it.copy(
+                                    startTime = newEnd
+                                )
                             }
                         }
                     }
@@ -271,9 +263,7 @@ fun ActiveFast(
                 Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                     Column {
                         FastLabel("Start:")
-                        if (fast.endTime != null) {
-                            FastLabel("Target:")
-                        }
+                        FastLabel("Target:")
                         FastLabel("Duration:")
                     }
                     Column(modifier = Modifier.width(IntrinsicSize.Max)) {
@@ -284,23 +274,17 @@ fun ActiveFast(
                                 )
                             }
                         }
-                        fast.endTime?.also { endTime ->
-                            fast.endSeconds?.also { endSeconds ->
-                                FastDate(endTime, endSeconds) { newEnd ->
-                                    updater {
-                                        it.copy(
-                                            goalDuration = newEnd - it.startTime
-                                        )
-                                    }
-                                }
+                        FastDate(fast.endTime, fast.endSeconds) { newEnd ->
+                            updater {
+                                it.copy(
+                                    goalDuration = newEnd - it.startTime
+                                )
                             }
                         }
-                        fast.durationText?.also {
-                            Text(
-                                it,
-                                modifier = Modifier.padding(vertical = 12.dp, horizontal = 8.dp)
-                            )
-                        }
+                        Text(
+                            fast.durationText,
+                            modifier = Modifier.padding(vertical = 12.dp, horizontal = 8.dp)
+                        )
                     }
                 }
             }

@@ -9,11 +9,11 @@ data class FastEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val startTime: Long,
     val endTime: Long? = null,
-    val goalDuration: Long? = null,
+    val goalDuration: Long,
 ) {
     fun display() = DisplayFast(
         id = id,
         startTime,
-        endTime ?: goalDuration?.let { startTime + goalDuration }
+        endTime ?: (startTime + goalDuration)
     )
 }

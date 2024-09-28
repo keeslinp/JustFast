@@ -10,7 +10,7 @@ import kotlinx.coroutines.IO
 import org.keeslinp.fasting.data.fast.FastDao
 import org.keeslinp.fasting.data.fast.FastEntity
 
-@Database(entities = [FastEntity::class], version = 2)
+@Database(entities = [FastEntity::class], version = 3)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getFastDao(): FastDao
