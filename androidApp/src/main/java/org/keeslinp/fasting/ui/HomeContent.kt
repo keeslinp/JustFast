@@ -26,7 +26,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -194,7 +193,6 @@ fun FastRow(fast: DisplayFast, modifier: Modifier = Modifier, updater: ((FastEnt
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeInterior(
     fastState: FastState?,
@@ -202,9 +200,7 @@ fun HomeInterior(
     history: ImmutableList<DisplayFast>,
     updater: (id: Long, (FastEntity) -> FastEntity) -> Unit
 ) {
-    Scaffold(
-        topBar = { CenterAlignedTopAppBar(title = { Text("Home") }) }
-    ) { padding ->
+    Scaffold { padding ->
         Surface(modifier = Modifier.padding(padding)) {
             LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
                 if (fastState == null) {

@@ -9,16 +9,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
 import org.keeslinp.fasting.data.fast.DisplayFast
 import org.keeslinp.fasting.data.fast.FastDao
 import org.keeslinp.fasting.data.fast.FastEntity
 import org.keeslinp.fasting.useCases.ToggleFastUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
-
-@Serializable
-data object HomeScreen
 
 class HomeViewModel(): KoinComponent, ViewModel() {
     private val toggleFastUseCase: ToggleFastUseCase by inject()
