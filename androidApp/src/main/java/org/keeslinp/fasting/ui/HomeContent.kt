@@ -26,7 +26,6 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.DatePicker
 import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,8 +47,8 @@ import kotlinx.datetime.offsetAt
 import kotlinx.datetime.toLocalDateTime
 import org.keeslinp.fasting.data.fast.DisplayFast
 import org.keeslinp.fasting.data.fast.FastEntity
-import org.keeslinp.fasting.screens.HomeComponent
-import org.keeslinp.fasting.screens.HomeComponent.FastState
+import org.keeslinp.fasting.screens.HomeViewModel
+import org.keeslinp.fasting.screens.HomeViewModel.FastState
 
 @Composable
 fun FastLabel(label: String) {
@@ -194,7 +193,6 @@ fun FastRow(fast: DisplayFast, modifier: Modifier = Modifier, updater: ((FastEnt
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeInterior(
     fastState: FastState?,
@@ -202,9 +200,7 @@ fun HomeInterior(
     history: ImmutableList<DisplayFast>,
     updater: (id: Long, (FastEntity) -> FastEntity) -> Unit
 ) {
-    Scaffold(
-        topBar = { CenterAlignedTopAppBar(title = { Text("Home") }) }
-    ) { padding ->
+    Scaffold { padding ->
         Surface(modifier = Modifier.padding(padding)) {
             LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
                 if (fastState == null) {
@@ -242,7 +238,7 @@ fun HomeInterior(
 }
 
 @Composable
-fun HomeContent(component: HomeComponent) {
+fun HomeContent(component: HomeViewModel) {
     val state by component.fastState.collectAsState()
     val history by component.history.collectAsState()
     HomeInterior(state, component::toggleFast, history, component::updateFast)
