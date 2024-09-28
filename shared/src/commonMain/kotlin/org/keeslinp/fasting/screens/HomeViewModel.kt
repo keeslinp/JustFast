@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
@@ -16,24 +19,28 @@ import org.keeslinp.fasting.useCases.ToggleFastUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class HomeViewModel(): KoinComponent, ViewModel() {
+class HomeViewModel() : KoinComponent, ViewModel() {
     private val toggleFastUseCase: ToggleFastUseCase by inject()
 
     sealed interface FastState {
         val toggleText: String
         val contentText: String
-        data class Active(val fast: DisplayFast): FastState {
+
+        data class Active(val fast: DisplayFast) : FastState {
             override val toggleText = "Stop"
             override val contentText: String = "Fasting since ${fast.startTime}"
         }
-        data object Inactive: FastState {
+
+        data object Inactive : FastState {
             override val toggleText = "Start"
             override val contentText = "Not fasting"
         }
     }
 
+    private val backgroundScope = CoroutineScope(viewModelScope.coroutineContext + Dispatchers.IO)
+
     fun toggleFast() {
-        viewModelScope.launch {
+        backgroundScope.launch {
             toggleFastUseCase.toggleFast()
         }
     }
@@ -41,13 +48,34 @@ class HomeViewModel(): KoinComponent, ViewModel() {
     private val fastDao: FastDao by inject()
     private val activeFast = fastDao.getActiveFast()
 
-    val fastState = activeFast.map { if (it != null) { FastState.Active(it.display()) } else { FastState.Inactive } }.stateIn(scope=viewModelScope, started = SharingStarted.WhileSubscribed(5000), initialValue = null)
+    val fastState = activeFast.map {
+        if (it != null) {
+            FastState.Active(it.display())
+        } else {
+            FastState.Inactive
+        }
+    }.stateIn(
+        scope = backgroundScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = null
+    )
 
-    val history = fastDao.getPastFasts().mapLatest { it.map(FastEntity::display).toImmutableList() }.stateIn(scope=viewModelScope, started = SharingStarted.WhileSubscribed(5000), persistentListOf())
+    val history = fastDao.getPastFasts().mapLatest { it.map(FastEntity::display).toImmutableList() }
+        .stateIn(
+            scope = backgroundScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            persistentListOf()
+        )
 
     fun updateFast(id: Long, updater: (FastEntity) -> FastEntity) {
-        viewModelScope.launch {
+        backgroundScope.launch {
             fastDao.getFast(id)?.let(updater)?.also { fastDao.update(it) }
+        }
+    }
+
+    fun deleteFast(id: Long) {
+        backgroundScope.launch {
+            fastDao.deleteFast(id)
         }
     }
 }

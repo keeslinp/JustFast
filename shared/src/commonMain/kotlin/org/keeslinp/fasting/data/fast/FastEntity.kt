@@ -17,4 +17,3 @@ data class FastEntity(
         endTime ?: goalDuration?.let { startTime + goalDuration }
     )
 }
-
