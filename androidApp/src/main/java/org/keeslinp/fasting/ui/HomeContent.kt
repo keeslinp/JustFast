@@ -6,9 +6,6 @@ import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -39,6 +36,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
@@ -145,6 +143,35 @@ fun FastDate(text: String, timeSeconds: Long, onChange: (Long) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun DeleteButton(onDelete: () -> Unit, content: @Composable (onPress: () -> Unit) -> Unit) {
+    var showDialog by remember { mutableStateOf(false) }
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Confirm deletion") },
+            text = { Text("Are you sure you want to delete this fast?") },
+            dismissButton = {
+                TextButton({ showDialog = false }) {
+                    Text("Cancel")
+                }
+            },
+            confirmButton = {
+                TextButton({
+                    showDialog = false
+                    onDelete()
+                }) {
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                }
+            }
+        )
+    }
+    content {
+        showDialog = true
+    }
+}
+
 @Composable
 fun FastRow(
     fast: DisplayFast,
@@ -216,8 +243,10 @@ fun FastRow(
                         }
                     }
                     Spacer(Modifier.weight(1.0f))
-                    IconButton(onClick = delete) {
-                        Icon(Icons.Default.Delete, "Delete fast")
+                    DeleteButton(delete) {
+                        IconButton(it) {
+                            Icon(Icons.Default.Delete, "Delete fast")
+                        }
                     }
                 }
             }
