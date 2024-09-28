@@ -16,7 +16,7 @@ class ToggleFastUseCase: KoinComponent {
         if (activeFast != null) {
             fastDao.update(activeFast.copy(endTime = now))
         } else {
-            fastDao.start(FastEntity(startTime = now))
+            fastDao.start(FastEntity(startTime = now, goalDuration = 16 * 60 * 60))
         }
     }
 }

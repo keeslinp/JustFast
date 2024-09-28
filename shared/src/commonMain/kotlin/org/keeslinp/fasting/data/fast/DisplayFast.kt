@@ -12,6 +12,7 @@ import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.math.roundToInt
 
 val dateFormatter = LocalDate.Format {
     dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
@@ -43,5 +44,5 @@ data class DisplayFast(val id: Long, val startSeconds: Long, val endSeconds: Lon
         dateFormatter) }
     val startTime: String by lazy { Instant.fromEpochSeconds(startSeconds).toLocalDateTime(timeZone).format(dateTimeFormatter) }
     val endTime: String? by lazy { endSeconds?.let { Instant.fromEpochSeconds(it).toLocalDateTime(timeZone).format(dateTimeFormatter) } }
-    val durationText: String? by lazy { endSeconds?.let { "${(it - startSeconds) / 3600 } hours" } }
+    val durationText: String? by lazy { endSeconds?.let { "${((it - startSeconds).toFloat() / 3600).roundToInt() } hours" } }
 }

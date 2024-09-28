@@ -5,16 +5,19 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.VisibilityThreshold
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -99,14 +102,18 @@ fun FastDate(text: String, timeSeconds: Long, onChange: (Long) -> Unit) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.fillMaxWidth().padding(8.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
         ) {
             Text(text)
             Icon(
                 imageVector = Icons.Default.Edit,
                 tint = MaterialTheme.colorScheme.secondary,
                 contentDescription = "Edit",
-                modifier = Modifier.padding(start = 8.dp, bottom = 4.dp).size(18.dp)
+                modifier = Modifier
+                    .padding(start = 8.dp, bottom = 4.dp)
+                    .size(18.dp)
             )
         }
     }
@@ -135,10 +142,16 @@ fun FastDate(text: String, timeSeconds: Long, onChange: (Long) -> Unit) {
 }
 
 @Composable
-fun FastRow(fast: DisplayFast, modifier: Modifier = Modifier, updater: ((FastEntity) -> FastEntity) -> Unit) {
+fun FastRow(
+    fast: DisplayFast,
+    modifier: Modifier = Modifier,
+    updater: ((FastEntity) -> FastEntity) -> Unit
+) {
     var expanded by remember { mutableStateOf(false) }
     Card(onClick = { expanded = !expanded }, modifier = modifier) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp).fillMaxWidth()) {
+        Column(modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .fillMaxWidth()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -156,7 +169,11 @@ fun FastRow(fast: DisplayFast, modifier: Modifier = Modifier, updater: ((FastEnt
                 }
                 Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = if (expanded) { "Collapse" } else { "Expand" },
+                    contentDescription = if (expanded) {
+                        "Collapse"
+                    } else {
+                        "Expand"
+                    },
                 )
             }
             AnimatedVisibility(expanded) {
@@ -194,6 +211,69 @@ fun FastRow(fast: DisplayFast, modifier: Modifier = Modifier, updater: ((FastEnt
 }
 
 @Composable
+fun ActiveFast(fast: DisplayFast, updater: ((FastEntity) -> FastEntity) -> Unit) {
+    Card(modifier = Modifier.padding(bottom = 16.dp)) {
+        Column (modifier = Modifier.padding(16.dp)) {
+            Text("Active Fast")
+            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                Column {
+                    FastLabel("Start:")
+                    if (fast.endTime != null) {
+                        FastLabel("Target:")
+                    }
+                    FastLabel("Duration:")
+                }
+                Column(modifier = Modifier.width(IntrinsicSize.Max)) {
+                    FastDate(fast.startTime, fast.startSeconds) { newStart ->
+                        updater {
+                            it.copy(
+                                startTime = newStart
+                            )
+                        }
+                    }
+                    fast.endTime?.also { endTime ->
+                        fast.endSeconds?.also { endSeconds ->
+                            FastDate(endTime, endSeconds) { newEnd ->
+                                updater {
+                                    it.copy(
+                                        goalDuration = newEnd - it.startTime
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    fast.durationText?.also {
+                        Text(it, modifier = Modifier.padding(vertical = 12.dp, horizontal = 8.dp))
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun NoActiveFast() {
+    Text("Start a fast!")
+}
+
+private fun LazyListScope.fastHistoryItems(
+    history: ImmutableList<DisplayFast>,
+    updater: (id: Long, (FastEntity) -> FastEntity) -> Unit
+) {
+    items(history, key = { it.id }) { fast ->
+        FastRow(
+            fast, Modifier.animateItem(
+                placementSpec = spring(
+                    stiffness = Spring.StiffnessHigh,
+                    visibilityThreshold = IntOffset.VisibilityThreshold
+                )
+            )
+        ) { updater(fast.id, it) }
+        Spacer(Modifier.height(4.dp))
+    }
+}
+
+@Composable
 fun HomeInterior(
     fastState: FastState?,
     toggleFast: () -> Unit,
@@ -211,7 +291,16 @@ fun HomeInterior(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text(fastState.contentText)
+                            when (fastState) {
+                                is FastState.Active -> ActiveFast(fastState.fast) {
+                                    updater(
+                                        fastState.fast.id,
+                                        it
+                                    )
+                                }
+
+                                FastState.Inactive -> NoActiveFast()
+                            }
                             Button(onClick = toggleFast) {
                                 Text(fastState.toggleText)
                             }
@@ -221,17 +310,7 @@ fun HomeInterior(
                 if (!history.isEmpty()) {
                     item { Spacer(Modifier.height(16.dp)) }
                 }
-                items(history, key = { it.id }) { fast ->
-                    FastRow(
-                        fast, Modifier.animateItem(
-                            placementSpec = spring(
-                                stiffness = Spring.StiffnessHigh,
-                                visibilityThreshold = IntOffset.VisibilityThreshold
-                            )
-                        )
-                    ) { updater(fast.id, it) }
-                    Spacer(Modifier.height(4.dp))
-                }
+                fastHistoryItems(history, updater)
             }
         }
     }

@@ -10,7 +10,7 @@ import kotlinx.coroutines.IO
 import org.keeslinp.fasting.data.fast.FastDao
 import org.keeslinp.fasting.data.fast.FastEntity
 
-@Database(entities = [FastEntity::class], version = 1)
+@Database(entities = [FastEntity::class], version = 2)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getFastDao(): FastDao
@@ -26,6 +26,7 @@ fun getRoomDatabase(
 ): AppDatabase {
     return builder
         .fallbackToDestructiveMigrationOnDowngrade(false)
+        .fallbackToDestructiveMigration(true)
         .setDriver(BundledSQLiteDriver())
         .setQueryCoroutineContext(Dispatchers.IO)
         .build()
