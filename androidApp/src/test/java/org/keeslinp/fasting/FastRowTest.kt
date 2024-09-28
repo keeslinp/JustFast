@@ -44,7 +44,7 @@ class FastRowTest: KoinTest {
     fun `render start date`() {
         composeTestRule.setContent {
             JustFastTheme {
-                FastRow(fast = DisplayFast(0, 1727315122, 1727315122 + 1000)) {}
+                FastRow(fast = DisplayFast(0, 1727315122, 1727315122 + 1000), updater = {}, delete = {})
             }
         }
         composeTestRule.onNodeWithTag("start-date", useUnmergedTree = true).assertTextEquals("Wed, Sep 25")
@@ -54,7 +54,7 @@ class FastRowTest: KoinTest {
     fun `show and hide start time`() {
         composeTestRule.setContent {
             JustFastTheme {
-                FastRow(fast = DisplayFast(0, 1727315122, 1727315122 + 1000)) {}
+                FastRow(fast = DisplayFast(0, 1727315122, 1727315122 + 1000), updater = {}, delete = {})
             }
         }
         composeTestRule.onNodeWithText("Start:", useUnmergedTree = true).assertIsNotDisplayed()
