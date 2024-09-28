@@ -14,6 +14,7 @@ data class FastEntity(
     fun display() = DisplayFast(
         id = id,
         startTime,
-        endTime ?: (startTime + goalDuration)
+        goalDuration,
+        endTime,
     )
 }
