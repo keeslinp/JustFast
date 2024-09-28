@@ -42,10 +42,10 @@ kotlin {
             implementation(libs.androidx.sqlite)
             implementation(project.dependencies.platform(libs.koin.bom))
             implementation(libs.koin.core)
-            implementation(libs.decompose.core)
-            implementation(libs.essenty.lifecycle.coroutines)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.collections.immutable)
+            implementation(libs.androidx.lifecycle.viewmodel)
+            implementation(libs.kotlinx.serialization.core)
         }
     }
 }

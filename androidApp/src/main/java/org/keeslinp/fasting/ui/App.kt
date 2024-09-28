@@ -1,19 +1,22 @@
-package org.keeslinp.fasting
+package org.keeslinp.fasting.ui
 
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.arkivanov.decompose.extensions.compose.stack.Children
-import com.arkivanov.decompose.extensions.compose.stack.animation.fade
-import com.arkivanov.decompose.extensions.compose.stack.animation.stackAnimation
-import org.keeslinp.fasting.screens.RootComponent
-import org.keeslinp.fasting.ui.HomeContent
-
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import org.keeslinp.fasting.screens.HomeScreen
+import org.keeslinp.fasting.screens.HomeViewModel
 
 @Composable
-fun RootContent(component: RootComponent, modifier: Modifier = Modifier) {
-    Children(stack = component.stack, modifier=modifier, animation = stackAnimation(fade())) {
-        when (val child = it.instance) {
-            is RootComponent.Child.Home -> HomeContent(child.component)
+fun RootContent() {
+    val navController = rememberNavController()
+    Scaffold { padding ->
+        NavHost(navController, startDestination = HomeScreen, modifier = Modifier.padding(padding)) {
+            composable<HomeScreen> { HomeContent(viewModel { HomeViewModel() }) }
         }
     }
 }

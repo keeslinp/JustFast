@@ -48,8 +48,8 @@ import kotlinx.datetime.offsetAt
 import kotlinx.datetime.toLocalDateTime
 import org.keeslinp.fasting.data.fast.DisplayFast
 import org.keeslinp.fasting.data.fast.FastEntity
-import org.keeslinp.fasting.screens.HomeComponent
-import org.keeslinp.fasting.screens.HomeComponent.FastState
+import org.keeslinp.fasting.screens.HomeViewModel
+import org.keeslinp.fasting.screens.HomeViewModel.FastState
 
 @Composable
 fun FastLabel(label: String) {
@@ -242,7 +242,7 @@ fun HomeInterior(
 }
 
 @Composable
-fun HomeContent(component: HomeComponent) {
+fun HomeContent(component: HomeViewModel) {
     val state by component.fastState.collectAsState()
     val history by component.history.collectAsState()
     HomeInterior(state, component::toggleFast, history, component::updateFast)
