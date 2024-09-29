@@ -26,13 +26,15 @@ class HomeViewModel() : KoinComponent, ViewModel() {
     sealed interface FastState {
         val toggleText: String
         val contentText: String
+        val fast: DisplayFast?
 
-        data class Active(val fast: DisplayFast) : FastState {
+        data class Active(override val fast: DisplayFast) : FastState {
             override val toggleText = "Stop"
             override val contentText: String = "Fasting since ${fast.startTime}"
         }
 
         data object Inactive : FastState {
+            override val fast: DisplayFast? = null
             override val toggleText = "Start"
             override val contentText = "Not fasting"
         }
