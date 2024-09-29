@@ -58,6 +58,7 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3" 
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref="robolectric" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref="androidx-navigation"}
 kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization"}
+androidx-material-icons-extended = {  group = "androidx.compose.material", name = "material-icons-extended"}
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

@@ -1,20 +1,15 @@
 package org.keeslinp.fasting.ui
 
-import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
-import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,6 +22,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Remove
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -48,16 +45,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
-import androidx.compose.ui.input.pointer.motionEventSpy
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
@@ -72,9 +62,6 @@ import org.keeslinp.fasting.data.fast.DisplayFast
 import org.keeslinp.fasting.data.fast.FastEntity
 import org.keeslinp.fasting.screens.HomeViewModel
 import org.keeslinp.fasting.screens.HomeViewModel.FastState
-import kotlin.math.PI
-import kotlin.math.cos
-import kotlin.math.sin
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
@@ -167,7 +154,6 @@ fun FastDate(text: String, timeSeconds: Long, onChange: (Long) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeleteButton(onDelete: () -> Unit, content: @Composable (onPress: () -> Unit) -> Unit) {
     var showDialog by remember { mutableStateOf(false) }
@@ -277,7 +263,7 @@ fun TickWhileActive(duration: Duration, action: () -> Unit) {
         active = true
         onPauseOrDispose { active = false }
     }
-    LaunchedEffect(active) {
+    LaunchedEffect(active, action, duration) {
         while (active) {
             action()
             delay(duration)
@@ -289,7 +275,7 @@ fun TickWhileActive(duration: Duration, action: () -> Unit) {
 fun ProgressCircle(fast: DisplayFast?) {
     var currentTime by remember(fast) {
         mutableLongStateOf(
-            fast?.endSeconds ?: Clock.System.now().epochSeconds
+            Clock.System.now().epochSeconds
         )
     }
     if (fast != null) {
@@ -331,6 +317,52 @@ fun ProgressCircle(fast: DisplayFast?) {
 }
 
 @Composable
+fun ActiveFastInterior(fast: DisplayFast, updater: ((FastEntity) -> FastEntity) -> Unit) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column {
+                FastLabel("Start:")
+                FastLabel("Target:")
+            }
+            Column(
+                modifier = Modifier
+                    .width(IntrinsicSize.Max)
+                    .height(IntrinsicSize.Max)
+            ) {
+                // If the fast is gone, remember the last fast
+                FastDate(fast.startTime, fast.startSeconds) { newStart ->
+                    updater {
+                        it.copy(
+                            startTime = newStart
+                        )
+                    }
+                }
+                FastDate(fast.endTime, fast.endSeconds) { newEnd ->
+                    updater {
+                        it.copy(
+                            goalDuration = newEnd - it.startTime
+                        )
+                    }
+                }
+            }
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            IconButton(
+                { updater { it.copy(goalDuration = it.goalDuration - 3600) } },
+                enabled = fast.goalDuration > 3600,
+            ) {
+                Icon(Icons.Outlined.Remove, "Subtract an hour")
+            }
+            Text(fast.durationText)
+            IconButton({ updater { it.copy(goalDuration = it.goalDuration + 3600) } }) {
+                Icon(Icons.Outlined.Add, "Add an hour")
+            }
+
+        }
+    }
+}
+
+@Composable
 fun ActiveFastArea(
     toggleFast: () -> Unit,
     updater: (id: Long, (FastEntity) -> FastEntity) -> Unit,
@@ -355,42 +387,8 @@ fun ActiveFastArea(
                                 rememberedFast = fastState.fast
                             }
                         }
-                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-                            Column {
-                                FastLabel("Start:")
-                                FastLabel("Target:")
-                                FastLabel("Goal Duration:")
-                            }
-                            Column(
-                                modifier = Modifier
-                                    .width(IntrinsicSize.Max)
-                                    .height(IntrinsicSize.Max)
-                            ) {
-                                // If the fast is gone, remember the last fast
-                                (fastState.fast ?: rememberedFast)?.also { fast ->
-                                    FastDate(fast.startTime, fast.startSeconds) { newStart ->
-                                        updater(fast.id) {
-                                            it.copy(
-                                                startTime = newStart
-                                            )
-                                        }
-                                    }
-                                    FastDate(fast.endTime, fast.endSeconds) { newEnd ->
-                                        updater(fast.id) {
-                                            it.copy(
-                                                goalDuration = newEnd - it.startTime
-                                            )
-                                        }
-                                    }
-                                    Text(
-                                        fast.durationText,
-                                        modifier = Modifier.padding(
-                                            vertical = 12.dp,
-                                            horizontal = 8.dp
-                                        )
-                                    )
-                                }
-                            }
+                        (fastState.fast ?: rememberedFast)?.also { fast ->
+                            ActiveFastInterior(fast) { updater(fast.id, it) }
                         }
                     }
                     Button(
