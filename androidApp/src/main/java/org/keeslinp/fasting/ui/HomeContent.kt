@@ -432,18 +432,16 @@ fun HomeInterior(
     updater: (id: Long, (FastEntity) -> FastEntity) -> Unit,
     delete: (id: Long) -> Unit,
 ) {
-    Scaffold { padding ->
-        Surface(modifier = Modifier.padding(padding)) {
-            LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
-                item {
-                    fastState?.also { ActiveFastArea(toggleFast, updater, it) }
-                        ?: CircularProgressIndicator()
-                }
-                if (!history.isEmpty()) {
-                    item { Spacer(Modifier.height(16.dp)) }
-                }
-                fastHistoryItems(history, updater, delete)
+    Surface {
+        LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
+            item {
+                fastState?.also { ActiveFastArea(toggleFast, updater, it) }
+                    ?: CircularProgressIndicator()
             }
+            if (!history.isEmpty()) {
+                item { Spacer(Modifier.height(16.dp)) }
+            }
+            fastHistoryItems(history, updater, delete)
         }
     }
 }
