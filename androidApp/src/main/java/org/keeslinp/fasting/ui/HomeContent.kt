@@ -20,16 +20,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.Delete
 import androidx.compose.material.icons.outlined.Remove
+import androidx.compose.material.icons.outlined.Restore
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.DatePicker
@@ -219,35 +219,46 @@ fun FastRow(
                 )
             }
             AnimatedVisibility(expanded) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column {
-                        FastLabel("Start:")
-                        FastLabel("End:")
-                    }
-                    Column(modifier = Modifier.width(IntrinsicSize.Max)) {
-                        FastDate(fast.startTime, fast.startSeconds) { newStart ->
-                            updater {
-                                it.copy(
-                                    startTime = newStart
-                                )
+                Column {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column {
+                            FastLabel("Start:")
+                            FastLabel("End:")
+                        }
+                        Column(modifier = Modifier.width(IntrinsicSize.Max)) {
+                            FastDate(fast.startTime, fast.startSeconds) { newStart ->
+                                updater {
+                                    it.copy(
+                                        startTime = newStart
+                                    )
+                                }
+                            }
+                            FastDate(fast.endTime, fast.endSeconds) { newEnd ->
+                                updater {
+                                    it.copy(
+                                        startTime = newEnd
+                                    )
+                                }
                             }
                         }
-                        FastDate(fast.endTime, fast.endSeconds) { newEnd ->
-                            updater {
-                                it.copy(
-                                    startTime = newEnd
-                                )
+                    }
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
+                        if (fast.first) {
+                            Button({ updater { it.copy(endTime = null)}}) {
+                                Icon(Icons.Outlined.Restore, "Resume fast")
+                                Text("Resume")
+
                             }
                         }
-                    }
-                    Spacer(Modifier.weight(1.0f))
-                    DeleteButton(delete) {
-                        IconButton(it) {
-                            Icon(Icons.Default.Delete, "Delete fast")
+                        DeleteButton(delete) {
+                            Button(it) {
+                                Icon(Icons.Outlined.Delete, "Delete fast")
+                                Text("Delete")
+                            }
                         }
                     }
                 }

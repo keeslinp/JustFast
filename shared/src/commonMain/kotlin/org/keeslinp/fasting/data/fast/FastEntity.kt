@@ -11,10 +11,11 @@ data class FastEntity(
     val endTime: Long? = null,
     val goalDuration: Long,
 ) {
-    fun display() = DisplayFast(
+    fun display(first: Boolean = false) = DisplayFast(
         id = id,
         startTime,
         goalDuration,
         endTime,
+        first,
     )
 }

@@ -64,7 +64,11 @@ class HomeViewModel() : KoinComponent, ViewModel() {
     )
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val history = fastDao.getPastFasts().mapLatest { it.map(FastEntity::display).toImmutableList() }
+    val history = fastDao.getPastFasts().mapLatest {
+        it.withIndex().map { (index, value) ->
+            value.display(index == 0)
+        }.toImmutableList()
+    }
         .stateIn(
             scope = backgroundScope,
             started = SharingStarted.WhileSubscribed(5000),
