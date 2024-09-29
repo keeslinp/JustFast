@@ -247,7 +247,7 @@ fun FastRow(
                         }
                     }
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
-                        if (fast.first) {
+                        if (fast.resumable) {
                             Button({ updater { it.copy(endTime = null)}}) {
                                 Icon(Icons.Outlined.Restore, "Resume fast")
                                 Text("Resume")

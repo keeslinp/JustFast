@@ -43,14 +43,14 @@ data class DisplayFast(
     val startSeconds: Long,
     val goalDuration: Long,
     val endSeconds: Long,
-    val first: Boolean = false,
+    val resumable: Boolean = false,
 ) : KoinComponent {
-    constructor(id: Long, startSeconds: Long, goalDuration: Long, endSeconds: Long?, first: Boolean = false) : this(
+    constructor(id: Long, startSeconds: Long, goalDuration: Long, endSeconds: Long?, resumable: Boolean = false) : this(
         id,
         startSeconds,
         goalDuration,
         endSeconds ?: startSeconds + goalDuration,
-        first,
+        resumable,
     )
 
     private val timeZone: TimeZone by inject()

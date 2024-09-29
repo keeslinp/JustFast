@@ -22,6 +22,7 @@ lifecycleRuntimeKtx = "2.9.0-alpha03"
 composeBom = "2024.09.02"
 robolectric = "4.13"
 kotlinx-serialization = "1.7.3"
+mokkery = "2.3.0"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -71,3 +72,4 @@ room = { id = "androidx.room", version.ref = "room" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+mokkery = {id = "dev.mokkery", version.ref = "mokkery"}

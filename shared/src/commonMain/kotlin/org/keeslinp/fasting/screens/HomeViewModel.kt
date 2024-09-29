@@ -6,11 +6,10 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.keeslinp.fasting.data.fast.DisplayFast
@@ -63,17 +62,22 @@ class HomeViewModel() : KoinComponent, ViewModel() {
         initialValue = null
     )
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    val history = fastDao.getPastFasts().mapLatest {
-        it.withIndex().map { (index, value) ->
-            value.display(index == 0)
-        }.toImmutableList()
-    }
-        .stateIn(
-            scope = backgroundScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            persistentListOf()
-        )
+    val history =
+        (fastDao.getPastFasts().combine(activeFast) { history, active ->
+            (if (active != null) {
+                history.map(FastEntity::display)
+            } else {
+                // If there is not an active fast, then the first historical fast is resumable
+                history.withIndex().map { (index, value) ->
+                    value.display(index == 0)
+                }
+            }).toImmutableList()
+        })
+            .stateIn(
+                scope = backgroundScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                persistentListOf()
+            )
 
     fun updateFast(id: Long, updater: (FastEntity) -> FastEntity) {
         backgroundScope.launch {
