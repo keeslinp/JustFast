@@ -374,7 +374,7 @@ fun ActiveFastArea(
     ) {
         Card {
             Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(16.dp)) {
-                ProgressCircle(fastState?.fast)
+                ProgressCircle(fastState.fast)
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     AnimatedVisibility(visible = fastState.fast != null, label = "loading") {
                         // We want to remember the previous fast so that when we are fading out
