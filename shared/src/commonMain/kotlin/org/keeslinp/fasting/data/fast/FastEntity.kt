@@ -2,11 +2,12 @@ package org.keeslinp.fasting.data.fast
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlin.uuid.Uuid
 
 
 @Entity
 data class FastEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey val id: Uuid,
     val startTime: Long,
     val endTime: Long? = null,
     val goalDuration: Long,

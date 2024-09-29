@@ -13,6 +13,7 @@ import kotlinx.datetime.toLocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.math.roundToInt
+import kotlin.uuid.Uuid
 
 val dateFormatter = LocalDate.Format {
     dayOfWeek(DayOfWeekNames.ENGLISH_ABBREVIATED)
@@ -39,13 +40,13 @@ val dateTimeFormatter = LocalDateTime.Format {
 }
 
 data class DisplayFast(
-    val id: Long,
+    val id: Uuid,
     val startSeconds: Long,
     val goalDuration: Long,
     val endSeconds: Long,
     val resumable: Boolean = false,
 ) : KoinComponent {
-    constructor(id: Long, startSeconds: Long, goalDuration: Long, endSeconds: Long?, resumable: Boolean = false) : this(
+    constructor(id: Uuid, startSeconds: Long, goalDuration: Long, endSeconds: Long?, resumable: Boolean = false) : this(
         id,
         startSeconds,
         goalDuration,

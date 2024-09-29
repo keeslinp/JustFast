@@ -18,6 +18,7 @@ import org.keeslinp.fasting.data.fast.FastEntity
 import org.keeslinp.fasting.useCases.ToggleFastUseCase
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
+import kotlin.uuid.Uuid
 
 class HomeViewModel() : KoinComponent, ViewModel() {
     private val toggleFastUseCase: ToggleFastUseCase by inject()
@@ -79,13 +80,13 @@ class HomeViewModel() : KoinComponent, ViewModel() {
                 persistentListOf()
             )
 
-    fun updateFast(id: Long, updater: (FastEntity) -> FastEntity) {
+    fun updateFast(id: Uuid, updater: (FastEntity) -> FastEntity) {
         backgroundScope.launch {
             fastDao.getFast(id)?.let(updater)?.also { fastDao.update(it) }
         }
     }
 
-    fun deleteFast(id: Long) {
+    fun deleteFast(id: Uuid) {
         backgroundScope.launch {
             fastDao.deleteFast(id)
         }

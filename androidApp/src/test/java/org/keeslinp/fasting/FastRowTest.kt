@@ -22,6 +22,7 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
 import org.robolectric.RobolectricTestRunner
+import kotlin.uuid.Uuid
 
 @RunWith(RobolectricTestRunner::class)
 class FastRowTest: KoinTest {
@@ -44,7 +45,7 @@ class FastRowTest: KoinTest {
     fun `render start date`() {
         composeTestRule.setContent {
             JustFastTheme {
-                FastRow(fast = DisplayFast(0, 1727315122, 1727315122 + 1000), updater = {}, delete = {})
+                FastRow(fast = DisplayFast(Uuid.random(), startSeconds = 1727315122, goalDuration = 1000, endSeconds = null), updater = {}, delete = {})
             }
         }
         composeTestRule.onNodeWithTag("start-date", useUnmergedTree = true).assertTextEquals("Wed, Sep 25")
@@ -54,7 +55,7 @@ class FastRowTest: KoinTest {
     fun `show and hide start time`() {
         composeTestRule.setContent {
             JustFastTheme {
-                FastRow(fast = DisplayFast(0, 1727315122, 1727315122 + 1000), updater = {}, delete = {})
+                FastRow(fast = DisplayFast(Uuid.random(), 1727315122, goalDuration = 1000, endSeconds = null), updater = {}, delete = {})
             }
         }
         composeTestRule.onNodeWithText("Start:", useUnmergedTree = true).assertIsNotDisplayed()

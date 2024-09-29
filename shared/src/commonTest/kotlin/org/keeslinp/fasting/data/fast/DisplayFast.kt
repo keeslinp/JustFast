@@ -9,6 +9,7 @@ import kotlin.test.AfterTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.uuid.Uuid
 
 class DisplayFastTest: KoinTest {
     @BeforeTest
@@ -27,19 +28,19 @@ class DisplayFastTest: KoinTest {
 
     @Test
     fun durationText() {
-        assertEquals("10 hours", DisplayFast(0, 0, 60 * 60 * 10, null).durationText)
+        assertEquals("10 hours", DisplayFast(Uuid.random(), 0, 60 * 60 * 10, null).durationText)
     }
 
     @Test
     fun startDate() {
-        assertEquals("Wed, Sep 25", DisplayFast(0, 1727315122, 1727315122 + 1000, null).startDate)
+        assertEquals("Wed, Sep 25", DisplayFast(Uuid.random(), 1727315122, goalDuration = 1000, null).startDate)
     }
     @Test
     fun startTime() {
-        assertEquals("Sep 25, 2024 6:45 PM", DisplayFast(0, 1727315122, 1727315122 + 1000, null).startTime)
+        assertEquals("Sep 25, 2024 6:45 PM", DisplayFast(Uuid.random(), 1727315122, goalDuration = 1000, null).startTime)
     }
     @Test
     fun endTime() {
-        assertEquals("Sep 25, 2024 6:46 PM", DisplayFast(0, 1727315122, 1727315122 + 60, null).endTime)
+        assertEquals("Sep 25, 2024 6:46 PM", DisplayFast(Uuid.random(), 1727315122, goalDuration = 60, null).endTime)
     }
 }

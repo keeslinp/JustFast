@@ -38,6 +38,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+        freeCompilerArgs += "-opt-in=kotlin.uuid.ExperimentalUuidApi"
     }
     buildFeatures {
         compose = true

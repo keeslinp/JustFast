@@ -20,6 +20,7 @@ import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
+import kotlin.uuid.Uuid
 
 class HomeViewModelTest : KoinTest {
     private val fastDao = mock<FastDao>()
@@ -44,8 +45,8 @@ class HomeViewModelTest : KoinTest {
         every { fastDao.getActiveFast() } returns flowOf(null)
         every { fastDao.getPastFasts() } returns flowOf(
             listOf(
-                FastEntity(0, 123, 1234, 100),
-                FastEntity(1, 10, 11, 1)
+                FastEntity(Uuid.random(), 123, 1234, 100),
+                FastEntity(Uuid.random(), 10, 11, 1)
             )
         )
 

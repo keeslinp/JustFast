@@ -65,6 +65,7 @@ import org.keeslinp.fasting.screens.HomeViewModel
 import org.keeslinp.fasting.screens.HomeViewModel.FastState
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
+import kotlin.uuid.Uuid
 
 @Composable
 fun FastLabel(label: String) {
@@ -388,7 +389,7 @@ fun ActiveFastInterior(fast: DisplayFast, updater: ((FastEntity) -> FastEntity) 
 @Composable
 fun ActiveFastArea(
     toggleFast: () -> Unit,
-    updater: (id: Long, (FastEntity) -> FastEntity) -> Unit,
+    updater: (id: Uuid, (FastEntity) -> FastEntity) -> Unit,
     fastState: FastState
 ) {
     Box(
@@ -427,8 +428,8 @@ fun ActiveFastArea(
 
 private fun LazyListScope.fastHistoryItems(
     history: ImmutableList<DisplayFast>,
-    updater: (id: Long, (FastEntity) -> FastEntity) -> Unit,
-    delete: (id: Long) -> Unit,
+    updater: (id: Uuid, (FastEntity) -> FastEntity) -> Unit,
+    delete: (id: Uuid) -> Unit,
 ) {
     items(history, key = { it.id }) { fast ->
         FastRow(
@@ -448,8 +449,8 @@ fun HomeInterior(
     fastState: FastState?,
     toggleFast: () -> Unit,
     history: ImmutableList<DisplayFast>,
-    updater: (id: Long, (FastEntity) -> FastEntity) -> Unit,
-    delete: (id: Long) -> Unit,
+    updater: (id: Uuid, (FastEntity) -> FastEntity) -> Unit,
+    delete: (id: Uuid) -> Unit,
 ) {
     Surface {
         LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {

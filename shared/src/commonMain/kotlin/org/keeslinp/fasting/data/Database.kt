@@ -5,13 +5,15 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.room.RoomDatabaseConstructor
+import androidx.room.TypeConverters
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import org.keeslinp.fasting.data.fast.FastDao
 import org.keeslinp.fasting.data.fast.FastEntity
 
-@Database(entities = [FastEntity::class], version = 3)
+@Database(entities = [FastEntity::class], version = 4)
 @ConstructedBy(AppDatabaseConstructor::class)
+@TypeConverters(UuidTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getFastDao(): FastDao
 }
