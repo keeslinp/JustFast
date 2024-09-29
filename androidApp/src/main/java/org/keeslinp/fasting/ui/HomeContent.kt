@@ -1,12 +1,12 @@
 package org.keeslinp.fasting.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -64,7 +64,6 @@ import org.keeslinp.fasting.screens.HomeViewModel
 import org.keeslinp.fasting.screens.HomeViewModel.FastState
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 
 @Composable
 fun FastLabel(label: String) {
@@ -272,21 +271,26 @@ fun TickWhileActive(duration: Duration, action: () -> Unit) {
 }
 
 @Composable
-fun ProgressCircle(fast: DisplayFast?) {
-    var currentTime by remember(fast) {
+fun rememberCurrentTime(active: Boolean): Long {
+    var currentTime by remember {
         mutableLongStateOf(
             Clock.System.now().epochSeconds
         )
     }
-    if (fast != null) {
+    if (active) {
         TickWhileActive(duration = 1.minutes) {
             currentTime = Clock.System.now().epochSeconds
         }
     }
 
+    return currentTime
+}
+
+@Composable
+fun ProgressCircle(fast: DisplayFast?) {
+    val currentTime = rememberCurrentTime(fast != null)
     val backgroundColor = MaterialTheme.colorScheme.onSurface
-    val completionRatio: Float =
-        fast?.let { (currentTime - it.startSeconds).toFloat() / it.goalDuration.toFloat() } ?: 0f
+    val completionRatio by animateFloatAsState(fast?.let { (currentTime - it.startSeconds).toFloat() / it.goalDuration.toFloat() } ?: 0f, label = "Completion ratio")
     val primaryColor = MaterialTheme.colorScheme.primary
 
     val padding = 6f;
