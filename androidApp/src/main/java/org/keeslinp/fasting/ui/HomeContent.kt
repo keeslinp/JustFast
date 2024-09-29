@@ -1,6 +1,7 @@
 package org.keeslinp.fasting.ui
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
@@ -289,8 +290,15 @@ fun rememberCurrentTime(active: Boolean): Long {
 @Composable
 fun ProgressCircle(fast: DisplayFast?) {
     val currentTime = rememberCurrentTime(fast != null)
-    val backgroundColor = MaterialTheme.colorScheme.onSurface
-    val completionRatio by animateFloatAsState(fast?.let { (currentTime - it.startSeconds).toFloat() / it.goalDuration.toFloat() } ?: 0f, label = "Completion ratio")
+    val backgroundColor by animateColorAsState(
+        if (fast == null) {
+            MaterialTheme.colorScheme.surfaceBright
+        } else {
+            MaterialTheme.colorScheme.onSurface
+        }, label = "Arc background color"
+    )
+    val completionRatio by animateFloatAsState(fast?.let { (currentTime - it.startSeconds).toFloat() / it.goalDuration.toFloat() }
+        ?: 0f, label = "Completion ratio")
     val primaryColor = MaterialTheme.colorScheme.primary
 
     val padding = 6f;
