@@ -19,7 +19,6 @@ import org.koin.dsl.module
 @KoinExperimentalAPI
 class MainApplication : Application() {
     init {
-        println("Init")
         onKoinStartup {
             androidContext(this@MainApplication)
             modules(sharedModule, module {
