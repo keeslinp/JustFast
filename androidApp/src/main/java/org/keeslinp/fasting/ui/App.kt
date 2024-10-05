@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.compose.NavHost
@@ -23,7 +22,6 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.collections.immutable.persistentListOf
 import org.keeslinp.fasting.screens.Screen
-import org.keeslinp.fasting.screens.HomeViewModel
 
 data class TopLevelRoute<T : Any>(
     val name: String,
@@ -74,7 +72,7 @@ fun RootContent() {
             startDestination = Screen.Home,
             modifier = Modifier.padding(padding)
         ) {
-            composable<Screen.Home> { HomeContent(viewModel { HomeViewModel() }) }
+            composable<Screen.Home> { HomeContent() }
             composable<Screen.Settings> { SettingsContent() }
         }
     }

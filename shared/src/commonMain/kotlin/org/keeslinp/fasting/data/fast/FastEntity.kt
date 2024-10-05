@@ -1,11 +1,13 @@
 package org.keeslinp.fasting.data.fast
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import kotlin.uuid.Uuid
 
 
-@Entity
+@Entity(indices = [Index(value = ["endTime"])])
 data class FastEntity(
     @PrimaryKey val id: Uuid,
     val startTime: Long,

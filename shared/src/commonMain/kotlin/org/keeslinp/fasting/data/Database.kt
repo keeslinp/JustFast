@@ -11,7 +11,7 @@ import kotlinx.coroutines.IO
 import org.keeslinp.fasting.data.fast.FastDao
 import org.keeslinp.fasting.data.fast.FastEntity
 
-@Database(entities = [FastEntity::class], version = 4)
+@Database(entities = [FastEntity::class], version = 5)
 @ConstructedBy(AppDatabaseConstructor::class)
 @TypeConverters(UuidTypeConverters::class)
 abstract class AppDatabase : RoomDatabase() {

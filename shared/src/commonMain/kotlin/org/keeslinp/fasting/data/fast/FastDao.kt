@@ -18,12 +18,21 @@ interface FastDao {
     @Query("SELECT * FROM FastEntity where endTime is NULL LIMIT 1")
     fun getActiveFast(): Flow<FastEntity?>
 
-    @Query("SELECT * FROM FastEntity where endTime ORDER BY endTime DESC")
-    fun getPastFasts(): Flow<List<FastEntity>>
+    @Query("SELECT COUNT(*) FROM FastEntity where endTime is NULL")
+    fun getActiveFastCount(): Flow<Int>
+
+    @Query("SELECT id FROM FastEntity where endTime ORDER BY endTime DESC")
+    fun getPastFasts(): Flow<List<Uuid>>
+
+    @Query("SELECT id FROM FastEntity where endTime ORDER BY endTime DESC LIMIT 1")
+    fun getMostRecentFast(): Flow<Uuid?>
 
     @Query("DELETE FROM FastEntity where id = :id")
     suspend fun deleteFast(id: Uuid)
 
     @Query("SELECT * FROM FastEntity where id is :id LIMIT 1")
-     suspend fun getFast(id: Uuid): FastEntity?
+    suspend fun getFast(id: Uuid): FastEntity?
+
+    @Query("SELECT * FROM FastEntity where id is :id LIMIT 1")
+    fun watchFast(id: Uuid): Flow<FastEntity?>
 }

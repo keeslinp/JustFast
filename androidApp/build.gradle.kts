@@ -74,6 +74,7 @@ dependencies {
     implementation(libs.koin.androidx.startup)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.kotlinx.datetime)
+    implementation(libs.resaca)
 
     implementation(libs.kermit)
 

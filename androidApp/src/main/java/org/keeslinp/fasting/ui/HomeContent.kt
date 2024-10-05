@@ -52,6 +52,10 @@ import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sebaslogen.resaca.KeyInScopeResolver
+import com.sebaslogen.resaca.rememberKeysInScope
+import com.sebaslogen.resaca.viewModelScoped
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.datetime.Clock
@@ -61,8 +65,9 @@ import kotlinx.datetime.offsetAt
 import kotlinx.datetime.toLocalDateTime
 import org.keeslinp.fasting.data.fast.DisplayFast
 import org.keeslinp.fasting.data.fast.FastEntity
-import org.keeslinp.fasting.screens.HomeViewModel
-import org.keeslinp.fasting.screens.HomeViewModel.FastState
+import org.keeslinp.fasting.viewModels.ActiveFastViewModel
+import org.keeslinp.fasting.viewModels.FastHistoryEntryViewModel
+import org.keeslinp.fasting.viewModels.FastHistoryViewModel
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
 import kotlin.uuid.Uuid
@@ -189,9 +194,10 @@ fun FastRow(
     modifier: Modifier = Modifier,
     updater: ((FastEntity) -> FastEntity) -> Unit,
     delete: () -> Unit,
+    expanded: Boolean,
+    toggleExpanded: () -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(false) }
-    Card(onClick = { expanded = !expanded }, modifier = modifier) {
+    Card(onClick = toggleExpanded, modifier = modifier) {
         Column(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -247,9 +253,12 @@ fun FastRow(
                             }
                         }
                     }
-                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End), modifier = Modifier.fillMaxWidth()) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
                         if (fast.resumable) {
-                            Button({ updater { it.copy(endTime = null)}}) {
+                            Button({ updater { it.copy(endTime = null) } }) {
                                 Icon(Icons.Outlined.Restore, "Resume fast")
                                 Text("Resume")
 
@@ -265,6 +274,25 @@ fun FastRow(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun FastRow(
+    viewModel: FastHistoryEntryViewModel,
+    modifier: Modifier,
+) {
+    val display by viewModel.display.collectAsStateWithLifecycle()
+    val expanded by viewModel.expanded.collectAsStateWithLifecycle()
+    display?.also {
+        FastRow(
+            fast = it,
+            modifier = modifier,
+            updater = viewModel::update,
+            delete = viewModel::delete,
+            expanded = expanded,
+            toggleExpanded = viewModel::toggleExpanded,
+        )
     }
 }
 
@@ -389,8 +417,8 @@ fun ActiveFastInterior(fast: DisplayFast, updater: ((FastEntity) -> FastEntity) 
 @Composable
 fun ActiveFastArea(
     toggleFast: () -> Unit,
-    updater: (id: Uuid, (FastEntity) -> FastEntity) -> Unit,
-    fastState: FastState
+    updater: ((FastEntity) -> FastEntity) -> Unit,
+    fastState: ActiveFastViewModel.FastState
 ) {
     Box(
         contentAlignment = Alignment.Center,
@@ -412,7 +440,7 @@ fun ActiveFastArea(
                             }
                         }
                         (fastState.fast ?: rememberedFast)?.also { fast ->
-                            ActiveFastInterior(fast) { updater(fast.id, it) }
+                            ActiveFastInterior(fast, updater)
                         }
                     }
                     Button(
@@ -426,55 +454,58 @@ fun ActiveFastArea(
     }
 }
 
-private fun LazyListScope.fastHistoryItems(
-    history: ImmutableList<DisplayFast>,
-    updater: (id: Uuid, (FastEntity) -> FastEntity) -> Unit,
-    delete: (id: Uuid) -> Unit,
-) {
-    items(history, key = { it.id }) { fast ->
-        FastRow(
-            fast,
-            Modifier.animateItem(
-                placementSpec = null
-            ),
-            updater = { updater(fast.id, it) },
-            delete = { delete(fast.id) },
+@Composable
+fun ActiveFastArea(viewModel: ActiveFastViewModel = viewModelScoped()) {
+    val fastState by viewModel.fastState.collectAsStateWithLifecycle()
+    fastState?.also {
+        ActiveFastArea(
+            fastState = it,
+            toggleFast = viewModel::toggleFast,
+            updater = viewModel::updateFast
         )
-        Spacer(Modifier.height(4.dp))
-    }
+    } ?: CircularProgressIndicator()
 }
 
 @Composable
-fun HomeInterior(
-    fastState: FastState?,
-    toggleFast: () -> Unit,
-    history: ImmutableList<DisplayFast>,
-    updater: (id: Uuid, (FastEntity) -> FastEntity) -> Unit,
-    delete: (id: Uuid) -> Unit,
+fun FastingHistory(
+    history: ImmutableList<Uuid>,
+    header: @Composable () -> Unit
 ) {
-    Surface {
-        LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
-            item {
-                fastState?.also { ActiveFastArea(toggleFast, updater, it) }
-                    ?: CircularProgressIndicator()
-            }
-            if (!history.isEmpty()) {
-                item { Spacer(Modifier.height(16.dp)) }
-            }
-            fastHistoryItems(history, updater, delete)
+    val keys = rememberKeysInScope(inputListOfKeys = history)
+    LazyColumn(modifier = Modifier.padding(horizontal = 8.dp)) {
+        item { header() }
+        items(history, key = { it }) { id ->
+            FastRow(
+                viewModelScoped(
+                    key = id,
+                    keyInScopeResolver = keys
+                ) { FastHistoryEntryViewModel(id) },
+                Modifier.animateItem(
+                    placementSpec = null
+                ),
+            )
+            Spacer(Modifier.height(4.dp))
         }
     }
 }
 
 @Composable
-fun HomeContent(viewModel: HomeViewModel) {
-    val state by viewModel.fastState.collectAsState()
-    val history by viewModel.history.collectAsState()
-    HomeInterior(
-        state,
-        viewModel::toggleFast,
-        history,
-        viewModel::updateFast,
-        viewModel::deleteFast
+fun FastingHistory(viewModel: FastHistoryViewModel = viewModelScoped<FastHistoryViewModel>(), header: @Composable () -> Unit = {}) {
+    val history by viewModel.history.collectAsStateWithLifecycle()
+    FastingHistory(
+        history = history,
+        header
     )
+}
+
+@Composable
+fun HomeContent() {
+    Surface {
+        Column {
+            FastingHistory {
+                ActiveFastArea()
+                Spacer(Modifier.height(8.dp))
+            }
+        }
+    }
 }
