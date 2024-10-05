@@ -55,6 +55,7 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.process)
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
@@ -63,15 +64,20 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
+    implementation(libs.androidx.startup.runtime)
     implementation(project(":shared"))
 
     implementation(project.dependencies.platform(libs.koin.bom))
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.core)
+    implementation(libs.koin.androidx.startup)
     implementation(libs.kotlinx.collections.immutable)
     implementation(libs.kotlinx.datetime)
 
+    implementation(libs.kermit)
+
+    testImplementation(libs.koin.test.junit4)
     testImplementation(libs.junit)
     testImplementation(libs.koin.test)
     testImplementation(libs.robolectric)

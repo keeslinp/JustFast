@@ -21,25 +21,19 @@ import org.koin.core.context.loadKoinModules
 import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.KoinTest
+import org.koin.test.KoinTestRule
 import org.robolectric.RobolectricTestRunner
 import kotlin.uuid.Uuid
 
 @RunWith(RobolectricTestRunner::class)
 class FastRowTest: KoinTest {
+    @get:Rule
+    val koinTestRule = KoinTestRule.create {
+        modules(module {
+            single<TimeZone> { TimeZone.of("America/Phoenix") }
+        })
+    }
     @get:Rule val composeTestRule = createComposeRule()
-
-    @Before
-    fun injectTimeZone() {
-        loadKoinModules(module {
-           single<TimeZone> { TimeZone.of("America/Phoenix") }
-       })
-    }
-
-    @After
-    fun cleanup() {
-        // Koin gets started by application setup
-        stopKoin()
-    }
 
     @Test
     fun `render start date`() {

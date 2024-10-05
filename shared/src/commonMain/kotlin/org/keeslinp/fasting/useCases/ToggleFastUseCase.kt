@@ -4,6 +4,7 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.datetime.Clock
 import org.keeslinp.fasting.data.fast.FastDao
 import org.keeslinp.fasting.data.fast.FastEntity
+import org.keeslinp.fasting.FastNotificationManager
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 import kotlin.uuid.Uuid
