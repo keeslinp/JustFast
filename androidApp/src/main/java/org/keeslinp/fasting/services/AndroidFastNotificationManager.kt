@@ -15,7 +15,7 @@ import androidx.core.app.NotificationManagerCompat
 import co.touchlab.kermit.Logger
 import org.keeslinp.fasting.FastNotificationManager
 import org.keeslinp.fasting.MainActivity
-import org.keeslinp.fasting.shared.R
+import org.keeslinp.fasting.R
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -67,7 +67,7 @@ class AndroidFastNotificationManager : KoinComponent, FastNotificationManager {
                         )
                     )
                     .addAction(
-                        R.mipmap.ic_launcher_round,
+                        0,
                         "Stop",
                         PendingIntent.getBroadcast(
                             context,
