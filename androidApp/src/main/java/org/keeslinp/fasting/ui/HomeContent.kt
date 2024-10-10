@@ -247,7 +247,7 @@ fun FastRow(
                             FastDate(fast.endTime, fast.endSeconds) { newEnd ->
                                 updater {
                                     it.copy(
-                                        startTime = newEnd
+                                        endTime = newEnd
                                     )
                                 }
                             }
