@@ -2,7 +2,6 @@ package org.keeslinp.fasting.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +16,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
@@ -47,13 +45,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.rotate
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.sebaslogen.resaca.KeyInScopeResolver
 import com.sebaslogen.resaca.rememberKeysInScope
 import com.sebaslogen.resaca.viewModelScoped
 import kotlinx.collections.immutable.ImmutableList
@@ -337,32 +336,46 @@ fun ProgressCircle(fast: DisplayFast?) {
             MaterialTheme.colorScheme.onSurface
         }, label = "Arc background color"
     )
-    val completionRatio by animateFloatAsState(fast?.let { (currentTime - it.startSeconds).toFloat() / it.goalDuration.toFloat() }
-        ?: 0f, label = "Completion ratio")
+    val completionRatio = fast?.let { (currentTime - it.startSeconds).toFloat() / it.goalDuration.toFloat() } ?: 0f
     val primaryColor = MaterialTheme.colorScheme.primary
 
     val padding = 6f;
+    val extraCircumference = 120f;
+    val durationHours = fast?.let { it.goalDuration / 3600 } ?: 16 // TODO: the default duration should be a setting
     Canvas(
         modifier = Modifier
             .fillMaxWidth()
             .aspectRatio(1.0f)
     ) {
-        drawCircle(
-            color = backgroundColor,
-            style = Stroke(width = 32f),
-            radius = (size.width / 2) - padding
-        )
-        if (completionRatio > 0f) {
-            rotate(90f) {
+        rotate(90f + extraCircumference / durationHours / 2) {
+            for (hour in 0..<durationHours) {
+                fun drawArc(color: Color, sweep: Float = (360f - extraCircumference) / durationHours) {
+                    drawArc(
+                        color = color,
+                        startAngle = 360f * hour / durationHours,
+                        sweepAngle = sweep,
+                        useCenter = false,
+                        topLeft = Offset(padding, padding),
+                        style = Stroke(width = 32f, cap = StrokeCap.Round),
+                        size = Size(size.width - (padding * 2), size.height - (padding * 2))
+                    )
+                }
+                // How much further the end of this hour's mark is than right now
+                val distanceToHourInHours = hour.toFloat() - completionRatio * durationHours.toFloat() + 1
                 drawArc(
-                    color = primaryColor,
-                    startAngle = 0f,
-                    sweepAngle = 360f * completionRatio,
-                    useCenter = false,
-                    topLeft = Offset(padding, padding),
-                    style = Stroke(width = 32f),
-                    size = Size(size.width - (padding * 2), size.height - (padding * 2))
+                    color = if (distanceToHourInHours < 0) {
+                        primaryColor
+                    } else {
+                        backgroundColor
+                    },
                 )
+                if (distanceToHourInHours > 0 && distanceToHourInHours < 1) {
+                    // Draw the partial segment to mark the partial hour
+                    drawArc(
+                        color = primaryColor,
+                        sweep = (360f - extraCircumference) / durationHours * (1 - distanceToHourInHours)
+                    )
+                }
             }
         }
     }
@@ -490,7 +503,10 @@ fun FastingHistory(
 }
 
 @Composable
-fun FastingHistory(viewModel: FastHistoryViewModel = viewModelScoped<FastHistoryViewModel>(), header: @Composable () -> Unit = {}) {
+fun FastingHistory(
+    viewModel: FastHistoryViewModel = viewModelScoped<FastHistoryViewModel>(),
+    header: @Composable () -> Unit = {}
+) {
     val history by viewModel.history.collectAsStateWithLifecycle()
     FastingHistory(
         history = history,
